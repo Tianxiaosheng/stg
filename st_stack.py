@@ -41,7 +41,7 @@ class St_stack(object):
         return greedy_block_type.GREEDY_NO_BLOCKED
 
     def dump_st_stack(self):
-        for i in range(self.size):
+        for i in range(self.top +1):
             node = self.nodes[i]
             print("t:%s, s:%s, acc:%s, vel:%s" % (node.t, node.s, node.acc, node.vel))
 

@@ -5,7 +5,7 @@ import numpy as np
 from enum import Enum
 import st_stack as stack
 import st_graph as graph
-
+import copy
 'st graph class'
 
 __auther__ = 'Xiaosheng'
@@ -67,7 +67,6 @@ class St_greedy(object):
             self.stack.top -= 1
 
     def greedy_search(self):
-        start_search_type = stack.greedy_search_type
         uniform_dec = 0.0
         last_success_dec = 0.0
         uniform_dec = 0.0
@@ -115,7 +114,7 @@ class St_greedy(object):
             if self.stack.nodes[self.stack.top].t > stop_time:
                 if not self.is_greedy_search_statck_empty():
                     last_success_dec = start_dec
-                    self.last_success_stack = self.stack
+                    self.last_success_stack = copy.deepcopy(self.stack)
                     self.stack.top = -1
                     dec = last_fail_dec
                 continue
@@ -136,7 +135,6 @@ class St_greedy(object):
                 while True:
                     if self.stack.nodes[self.stack.top].vel >= limit_vel:
                         start_search_type = stack.greedy_search_type.SEARCH_TYPE_KEEP
-                        print("over speed_limit!")
                         break
                     self.stack.nodes[self.stack.top +1].vel = min(action_result_vel, limit_vel)
                     self.stack.nodes[self.stack.top +1].s = self.stack.nodes[self.stack.top].s
@@ -146,7 +144,8 @@ class St_greedy(object):
                     self.stack.nodes[self.stack.top +1].by_search_type = self.stack.nodes[self.stack.top].search_type;
                     if self.stack.nodes[self.stack.top].by_search_type == stack.greedy_search_type.SEARCH_TYPE_DEC:
                         self.stack.nodes[self.stack.top +1].search_allowed[stack.greed_search_type.SEARCH_TYPE_DEC.value -1] = False
-                    self.stack.nodes[self.stack.top +1].block_type = self.stack.get_st_point_blocked_type()
+                    self.stack.nodes[self.stack.top +1].block_type =\
+                            self.stack.get_st_point_blocked_type()
                     if self.stack.nodes[self.stack.top +1].block_type.value >= stack.greedy_block_type.GREEDY_ACC_BLOCKED.value:
                         start_search_type = stack.greedy_search_type.SEARCH_TYPE_KEEP
                         break
@@ -154,7 +153,7 @@ class St_greedy(object):
                     self.stack.nodes[self.stack.top +1].dec_to_be_used = self.stack.nodes[self.stack.top].dec_to_be_used
                     self.push_greedy_search_stack()
                     break
-                self.stack.nodes[self.stack.top].search_type = stack.greedy_search_type(self.stack.nodes[self.stack.top].search_type.value +1)
+                self.stack.nodes[self.stack.top -1].search_type = stack.greedy_search_type(self.stack.nodes[self.stack.top -1].search_type.value +1)
             elif self.stack.nodes[self.stack.top].search_type == stack.greedy_search_type.SEARCH_TYPE_KEEP:
                 if self.stack.nodes[self.stack.top].search_allow[self.stack.nodes[self.stack.top].search_type.value -1]:
                     action_result_vel = self.stack.nodes[self.stack.top].vel
@@ -182,7 +181,7 @@ class St_greedy(object):
                     self.stack.nodes[self.stack.top +1].dec_to_be_used = self.stack.nodes[self.stack.top].dec_to_be_used
                     self.push_greedy_search_stack()
                     break
-                self.stack.nodes[self.stack.top].search_type = stack.greedy_search_type(self.stack.nodes[self.stack.top].search_type.value +1)
+                self.stack.nodes[self.stack.top -1].search_type = stack.greedy_search_type(self.stack.nodes[self.stack.top -1].search_type.value +1)
             elif self.stack.nodes[self.stack.top].search_type == stack.greedy_search_type.SEARCH_TYPE_DEC:
                 if self.stack.nodes[self.stack.top].search_allow[self.stack.nodes[self.stack.top].search_type.value-1]:
                     limit_vel = ST_MAX_VEL
@@ -213,7 +212,7 @@ class St_greedy(object):
                     self.push_greedy_search_stack()
                     break
                 if self.stack.nodes[self.stack.top].dec_to_be_used > end_dec:
-                    self.stack.nodes[self.stack.top].search_type = stack.greedy_search_type(self.stack.nodes[self.stack.top].search_type.value +1)
+                    self.stack.nodes[self.stack.top -1].search_type = stack.greedy_search_type(self.stack.nodes[self.stack.top -1].search_type.value +1)
             else:
                 self.pop_greedy_search_stack()
         if last_success_dec > 0.0:
@@ -224,5 +223,4 @@ if __name__ == '__main__':
     st = St_greedy()
     st.greedy_search()
     st.stack.dump_st_stack()
-    print("stack_top:%d"% (st.stack.top))
 

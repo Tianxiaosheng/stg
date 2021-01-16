@@ -7,7 +7,9 @@ import matplotlib
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 from matplotlib.figure import Figure
-
+import matplotlib.pyplot as plt
+import st_greedy as greedy
+from st_graph import stg_cost_type
 import numpy as np
 
 
@@ -29,21 +31,63 @@ class Stg(tk.Tk):
         self.ax = fig.add_subplot(111)
         self.canvas = FigureCanvasTkAgg(fig, footframe)
         self.canvas.get_tk_widget().grid(column=0,row=0,sticky=(E, W))
+        self.greedy = greedy.St_greedy()
+        self.greedy.greedy_search()
 
-        button1 = tk.Button(footframe, text='重画', command=self.draw)
+        button1 = tk.Button(footframe, text='重画', command=self.draw_st_line)
         button1.grid(column=1, row=1, sticky=(E, W))
         button2 = tk.Button(footframe, text='退出', command=self._quit)
         button2.grid(column=2, row=2, sticky=(E, W))
-        self.draw()
+        self.draw_st_line()
+        self.draw_st_graph()
 
-    def draw(self):
-        ''' 绘图逻辑 '''
-        x = np.random.randint(0, 50, size = 100)
-        y = np.random.randint(0, 50, size = 100)
-        #self.fig.clf()                       #方式1: (1)清除整个figure区域
-        #self.ax = self.fig.add_subplot(111)         #(2)重新分配axes区域      
-        self.ax.clear()                       #方式2:    清除原来的axes区域
-        self.ax.scatter(x, y, s=3)                   #   重新画
+    def draw_st_graph(self):
+        infi_point = np.zeros(shape=(1000, 2), dtype=float)
+        infi_size = 0
+        safe_point = np.zeros(shape=(1000, 2), dtype=float)
+        safe_size = 0
+        for i in range(self.greedy.graph.max_index_t +1):
+            for j in range(self.greedy.graph.max_index_s +1):
+                cost = self.greedy.graph.cost[i][j]
+                if cost == stg_cost_type.STG_COST_INFI:
+                    infi_point[infi_size][0] =\
+                            self.greedy.graph.unit_s * j
+                    infi_point[infi_size][1] =\
+                            self.greedy.graph.unit_t * i
+                    infi_size += 1
+                elif cost == stg_cost_type.STG_COST_SAFE_DIST:
+                    safe_point[safe_size][0] =\
+                            self.greedy.graph.unit_s * j
+                    safe_point[safe_size][1] =\
+                            self.greedy.graph.unit_t * i
+                    safe_size += 1
+        x = []
+        y = []
+        for i in range(infi_size):
+            x.append(infi_point[i][0])
+            y.append(infi_point[i][1])
+        self.ax.scatter(x, y, s=3, c='r')
+        x = []
+        y = []
+        for i in range(safe_size):
+            x.append(safe_point[i][0])
+            y.append(safe_point[i][1])
+        self.ax.scatter(x, y, s=3, c='b')
+        self.ax.set_xlim(0, 100)
+        self.ax.set_ylim(0, 10)
+        self.canvas.draw()
+
+    def draw_st_line(self):
+        x = []
+        y = []
+        for i in range(self.greedy.stack.top +1):
+            node = self.greedy.stack.nodes[i]
+            x.append(node.s)
+            y.append(node.t)
+        self.ax.clear()
+        self.ax.plot(x,y)
+        self.ax.set_xlim(0, 100)
+        self.ax.set_ylim(0, 10)
         self.canvas.draw()
     def _quit(self):
         ''' 退出 '''
@@ -51,6 +95,5 @@ class Stg(tk.Tk):
         self.destroy()
 
 app = Stg()
-
 app.mainloop()
 
