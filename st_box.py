@@ -14,8 +14,8 @@ class St_box(object):
         self.safe_dist = 10.0
         self.upper_t = 10.0
         self.lower_t = 0.0
-        self.lower_s = 30.0
-        self.upper_s = 34.0
+        self.lower_s = 25.0
+        self.upper_s = 30.0
 
 if __name__ == '__main__':
     st = St_box()

@@ -37,13 +37,12 @@ class St_stack(object):
         for i in range(MAX_ST_POINT_LIST_SIZE):
             node = St_node()
             self.nodes[i] = node
-    def get_st_point_blocked_type(self):
-        return greedy_block_type.GREEDY_NO_BLOCKED
 
     def dump_st_stack(self):
         for i in range(self.top +1):
             node = self.nodes[i]
-            print("t:%s, s:%s, acc:%s, vel:%s" % (node.t, node.s, node.acc, node.vel))
+            print("t:%s, s:%s, acc:%s, vel:%s, index_t:%d, index_s:%d" %\
+                    (node.t, node.s, node.acc, node.vel, node.index_t, node.index_s))
 
 if __name__ == '__main__':
     st = St_stack()
