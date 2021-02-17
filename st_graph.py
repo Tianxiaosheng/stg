@@ -148,7 +148,8 @@ class ST_Graph(object):
         last_s = s
         index_t = curr_node.index_t
         index_s = curr_node.index_s
-        print("t:%f, s:%f, index_t:%d, index_s:%d"% (t, s, index_t, index_s))
+        print("curr_t:%f, curr_s:%f, next_t:%f, next_s:%f" %
+                (curr_node.t, curr_node.s, next_node.t, next_node.s))
         t += 0.5 * self.unit_t
         while True:
             if t > next_node.t:

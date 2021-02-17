@@ -41,7 +41,7 @@ class St_stack(object):
     def dump_st_stack(self):
         for i in range(self.top +1):
             node = self.nodes[i]
-            print("t:%s, s:%s, acc:%s, vel:%s, index_t:%d, index_s:%d" %\
+            print("t:%.2f, s:%.2f, acc:%.2f, vel:%.2f, index_t:%d, index_s:%d"%\
                     (node.t, node.s, node.acc, node.vel, node.index_t, node.index_s))
 
 if __name__ == '__main__':
